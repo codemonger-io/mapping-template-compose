@@ -1,0 +1,41 @@
+{
+  "name": "mapping-template-compose",
+  "version": "0.1.0",
+  "description": "Compose API Gateway mapping templates",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/index.d.ts"
+  ],
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs && api-extractor run --local",
+    "build:doc": "npm run build && api-documenter markdown --input-folder temp --output-folder api-docs/markdown",
+    "type-check": "tsc --noEmit",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "keywords": [
+    "AWS",
+    "APIGateway",
+    "MappingTemplate"
+  ],
+  "author": "Kikuo Emoto <kemoto@codemonger.io>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "devDependencies": {
+    "@microsoft/api-documenter": "^7.22.4",
+    "@microsoft/api-extractor": "^7.34.8",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.3",
+    "jest": "^29.5.0",
+    "rollup": "^3.21.4",
+    "ts-jest": "^29.1.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.8.4"
+  }
+}
