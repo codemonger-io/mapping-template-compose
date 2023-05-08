@@ -1,9 +1,11 @@
 import {
   type MappingTemplateItem,
+  andCommaConditions,
   getCommaConditionAfterItem,
   ifThen,
   ifThenElse,
   isKeyValue,
+  orCommaConditions,
 } from '../src/items';
 
 describe('isKeyValue', () => {
@@ -55,6 +57,84 @@ describe('ifThenElse', () => {
       thenBlock,
       elseBlock,
     });
+  });
+});
+
+describe('orCommaConditions', () => {
+  it('should return "(condition1) || (condition2) || (condition3)" for ["condition1", "condition2", "condition3"]', () => {
+    expect(orCommaConditions('condition1', 'condition2', 'condition3'))
+      .toEqual('(condition1) || (condition2) || (condition3)');
+  });
+
+  it('should return "condition" for "condition"', () => {
+    expect(orCommaConditions('condition')).toEqual('condition');
+  });
+
+  it('should return "false" for empty input', () => {
+    expect(orCommaConditions()).toEqual('false');
+  });
+
+  it('should return "(condition1) || (condition2)" for ["false", "condition1", "condtion2"]', () => {
+    expect(orCommaConditions('false', 'condition1', 'condition2'))
+      .toEqual('(condition1) || (condition2)');
+  });
+
+  it('should return "(condition1) || (condition2)" for ["condition1", "condtion2", "false"]', () => {
+    expect(orCommaConditions('condition1', 'condition2', 'false'))
+      .toEqual('(condition1) || (condition2)');
+  });
+
+  it('should return "false" for ["false", "false", "false"]', () => {
+    expect(orCommaConditions('false', 'false', 'false')).toEqual('false');
+  });
+
+  it('should return "true" for ["true", "condition1", "condition2"]', () => {
+    expect(orCommaConditions('true', 'condition1', 'condition2'))
+      .toEqual('true');
+  });
+
+  it('should return "true" for ["condition1", "condition2", "true"]', () => {
+    expect(orCommaConditions('condition1', 'condition2', 'true'))
+      .toEqual('true');
+  });
+});
+
+describe('andCommaConditions', () => {
+  it('should return "(condition1) && (condition2) && (condition3)" for ["condition1", "condition2", "condition3"]', () => {
+    expect(andCommaConditions('condition1', 'condition2', 'condition3'))
+      .toEqual('(condition1) && (condition2) && (condition3)');
+  });
+
+  it('should return "condition" for "condition"', () => {
+    expect(andCommaConditions('condition')).toEqual('condition');
+  });
+
+  it('should return "true" for empty input', () => {
+    expect(andCommaConditions()).toEqual('true');
+  });
+
+  it('should return "(condition1) && (condition2)" for ["true", "condition1", "condition2"]', () => {
+    expect(andCommaConditions('true', 'condition1', 'condition2'))
+      .toEqual('(condition1) && (condition2)');
+  });
+
+  it('should return "(condition1) && (condition2)" for ["condition1", "condition2", "true"]', () => {
+    expect(andCommaConditions('condition1', 'condition2', 'true'))
+      .toEqual('(condition1) && (condition2)');
+  });
+
+  it('should return "true" for ["true", "true", "true"]', () => {
+    expect(andCommaConditions('true', 'true', 'true')).toEqual('true');
+  });
+
+  it('should return "false" for ["false", "condition1", "condition2"]', () => {
+    expect(andCommaConditions('false', 'condition1', 'condition2'))
+      .toEqual('false');
+  });
+
+  it('should return "false" for ["condition1", "condition2", "false"]', () => {
+    expect(andCommaConditions('condition1', 'condition2', 'false'))
+      .toEqual('false');
   });
 });
 

@@ -1,4 +1,9 @@
-import { IfBlock, getCommaConditionAfterIfBlock, getCommaConditionAfterItem, orConditions } from './items';
+import {
+  IfBlock,
+  getCommaConditionAfterIfBlock,
+  getCommaConditionAfterItem,
+  orCommaConditions,
+} from './items';
 
 /**
  * Pending block.
@@ -414,7 +419,7 @@ class IfDirectiveBlock extends BlockContext {
   }
 
   protected getCommaContextOfPart(): CommaContext {
-    let condition = orConditions(
+    let condition = orCommaConditions(
       ...this.definition.thenBlock.map(i => getCommaConditionAfterItem(i)),
     );
     if (condition === 'true') {
@@ -515,7 +520,7 @@ class ElseDirectiveBlock extends IfDirectiveBlock {
     if (this.definition.elseBlock == null) {
       return COMMA_CONTEXT_NEVER;
     }
-    let condition = orConditions(
+    let condition = orCommaConditions(
       ...this.definition.elseBlock.map(i => getCommaConditionAfterItem(i)),
     );
     if (condition === 'true') {

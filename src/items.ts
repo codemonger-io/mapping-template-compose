@@ -149,7 +149,7 @@ export function getCommaConditionAfterIfBlock(ifBlock: IfBlock): string {
   const { condition, elseBlock, thenBlock } = ifBlock;
   let thenSubcondition: string;
   if (thenBlock.length > 0) {
-    thenSubcondition = orConditions(
+    thenSubcondition = orCommaConditions(
       ...thenBlock.map(i => getCommaConditionAfterItem(i)),
     );
   } else {
@@ -157,7 +157,7 @@ export function getCommaConditionAfterIfBlock(ifBlock: IfBlock): string {
   }
   let elseSubcondition: string;
   if (elseBlock != null && elseBlock.length > 0) {
-    elseSubcondition = orConditions(
+    elseSubcondition = orCommaConditions(
       ...elseBlock.map(i => getCommaConditionAfterItem(i)),
     );
   } else {
@@ -166,16 +166,30 @@ export function getCommaConditionAfterIfBlock(ifBlock: IfBlock): string {
   if ((thenSubcondition === 'true') && (elseSubcondition === 'true')) {
     return 'true'; // (A || !A) → true
   }
-  return orConditions(
-    andConditions(condition, thenSubcondition),
-    andConditions(`!(${condition})`, elseSubcondition),
+  return orCommaConditions(
+    andCommaConditions(condition, thenSubcondition),
+    andCommaConditions(`!(${condition})`, elseSubcondition),
   );
 }
 
-// ORs conditions.
-//
-// "false" if `conditions` is empty.
-export function orConditions(...conditions: string[]): string {
+/**
+ * ORs given conditions that determine if a comma is necessary.
+ *
+ * @remarks
+ *
+ * Encloses individual items in `conditions` in parenthesis "()" and
+ * concatenates them with " || " unless `conditions` has only one item.
+ *
+ * Drops any "false" in `conditions`.
+ *
+ * @returns
+ *
+ *   "true" if `conditions` includes any "true".
+ *   "false" if `conditions` is empty.
+ *
+ * @beta
+ */
+export function orCommaConditions(...conditions: string[]): string {
   if (conditions.indexOf('true') !== -1) {
     return 'true';
   }
@@ -191,10 +205,24 @@ export function orConditions(...conditions: string[]): string {
     .join(' || ');
 }
 
-// ANDs conditions.
-//
-// "true" if `conditions` is empty.
-function andConditions(...conditions: string[]): string {
+/**
+ * ANDs given conditions that determine if a comma is necessary.
+ *
+ * @remarks
+ *
+ * Encloses individual items in `conditions` in parenthesis "()" and
+ * concatenates them with " && " unless `conditions` has only one item.
+ *
+ * Drops any "true" in `conditions`.
+ *
+ * @returns
+ *
+ *   "false" if `conditions` includes any "false".
+ *   "true" if `conditions` is empty.
+ *
+ * @beta
+ */
+export function andCommaConditions(...conditions: string[]): string {
   if (conditions.indexOf('false') !== -1) {
     return 'false';
   }
