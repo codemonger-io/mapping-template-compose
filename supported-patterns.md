@@ -161,7 +161,7 @@ will produce:
 ```ts
 import { composeMappingTemplate, ifThen } from 'mapping-template-compose';
 
-composeMappingTemplate(
+composeMappingTemplate([
   ifThen(
     '$input.params("flag") == "on"',
     [
@@ -175,7 +175,7 @@ composeMappingTemplate(
     '$input.params("date") != ""',
     [['key2', '123']]
   ),
-);
+]);
 ```
 
 will produce:
@@ -192,6 +192,223 @@ will produce:
   ,
 #end
   "key2": 123
+#end
+}
+```
+
+### Nested `#if` 2
+
+```ts
+import { componentMappingTemplate, ifThen } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ifThen(
+    '$input.params("flag") == "on"',
+    [['key', '"value"']],
+  ),
+  ifThen(
+    '$input.json("$.page") > 1',
+    [ifThen(
+      '$input.params("date") != ""',
+      [['key2', '123']],
+    )],
+  ),
+]);
+```
+
+will produce:
+
+```json
+{
+#if ($input.params("flag") == "on")
+  "key": "value"
+#end
+#if ($input.json("$.page") > 1)
+#if ($input.params("date") != "")
+#if ($input.params("flag") == "on")
+  ,
+#end
+  "key2": 123
+#end
+#end
+}
+```
+
+## `#if`-`#else` directive
+
+### Simple `#if`-`#else`
+
+```ts
+import { composeMappingTemplate, ifThenElse } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ifThenElse(
+    '$input.params("flag") == "on"',
+    [['key', '"value"']],
+    [['key2', '123']],
+  ),
+]);
+```
+
+will produce:
+
+```json
+{
+#if ($input.params("flag") == "on")
+  "key": "value"
+#else
+  "key2": 123
+#end
+}
+```
+
+### `#if`-`#else` followed by a property
+
+```ts
+import { composeMappingTemplate, ifThenElse } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ifThenElse(
+    '$input.params("flag") == "on"',
+    [['key', '"value"']],
+    [['key2', '123']],
+  ),
+  ['key3', 'true'],
+]);
+```
+
+will produce:
+
+```json
+{
+#if ($input.params("flag") == "on")
+  "key": "value",
+#else
+  "key2": 123,
+#end
+  "key3": 'true'
+}
+```
+
+### `#if`-`#else` following a property
+
+```ts
+import { composeMappingTemplate, ifThenElse } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ['key', '"value"'],
+  ifThenElse(
+    '$input.params("flag") == "on"',
+    [['key2', '123']],
+    [['key3', 'true']],
+  ),
+]);
+```
+
+will produce:
+
+```json
+{
+  "key": "value",
+#if ($input.params("flag") == "on")
+  "key2": 123
+#else
+  "key3": true
+#end
+}
+```
+
+### `#if`-`#else` nesting `#if` and followed by `#if`
+
+```ts
+import { composeMappingTemplate, ifThen, ifThenElse } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ifThenElse(
+    '$input.params("flag") == "on"',
+    [ifThen(
+      '$input.json("page") > 1',
+      [['key', '"value"']],
+    )],
+    [ifThen(
+      '$input.params("date") != ""',
+      [['key2', '123']],
+    )],
+  ),
+  ifThen(
+    '$input.json("amount") > 1000',
+    [['key3', 'true']],
+  ),
+]);
+```
+
+will produce:
+
+```json
+{
+#if ($input.params("flag") == "on")
+#if ($input.json("page") > 1)
+  "key": "value"
+#end
+#else
+#if ($input.params("date") != "")
+  "key2": 123
+#end
+#end
+#if ($input.json("amount") > 1000)
+#if ((($input.params("flag") == "on") && ($input.json("page") > 1)) || ((!($input.params("flag") == "on")) && ($input.params("date") != "")))
+  ,
+#end
+  "key3": true
+#end
+}
+```
+
+### `#if`-`#else` nesting `#if` and following `#if`
+
+```ts
+import { composeMappingTemplate, ifThen, ifThenElse } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ifThen(
+    '$input.params("flag") == "on"',
+    [['key', '"value"']],
+  ),
+  ifThenElse(
+    '$input.json("page") > 1',
+    [ifThen(
+      '$input.params("date") != ""',
+      [['key2', '123']],
+    )],
+    [ifThen(
+      '$input.json("amount") > 1000',
+      [['key3', 'true']],
+    )],
+  ),
+]);
+```
+
+will produce:
+
+```json
+{
+#if ($input.params("flag") == "on")
+  "key": "value"
+#end
+#if ($input.json("page") > 1)
+#if ($input.params("date") != "")
+#if ($input.params("flag") == "on")
+  ,
+#end
+  "key2": 123
+#end
+#else
+#if ($input.json("amount") > 1000)
+#if ($input.params("flag") == "on")
+  ,
+#end
+  "key3": true
+#end
 #end
 }
 ```
