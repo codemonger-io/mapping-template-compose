@@ -10,11 +10,14 @@ Compose API Gateway mapping templates.
 
 |  Function | Description |
 |  --- | --- |
+|  [andCommaConditions(conditions)](./mapping-template-compose.andcommaconditions.md) | **_(BETA)_** ANDs given conditions that determine if a comma is necessary. |
 |  [composeMappingTemplate(items)](./mapping-template-compose.composemappingtemplate.md) | **_(BETA)_** Composes a mapping template for Amazon API Gateway. |
+|  [getCommaConditionAfterIfBlock(ifBlock)](./mapping-template-compose.getcommaconditionafterifblock.md) | **_(BETA)_** Returns the condition in which a trailing comma is necessary after a given [IfBlock](./mapping-template-compose.ifblock.md)<!-- -->. |
 |  [getCommaConditionAfterItem(item)](./mapping-template-compose.getcommaconditionafteritem.md) | **_(BETA)_** Returns the condition in which a trailing comma is necessary after a given item. |
 |  [ifThen(condition, thenBlock)](./mapping-template-compose.ifthen.md) | **_(BETA)_** Creates an <code>IfBlock</code> that has only the then-block. |
 |  [ifThenElse(condition, thenBlock, elseBlock)](./mapping-template-compose.ifthenelse.md) | **_(BETA)_** Creates an <code>IfBlock</code> that has then- and else-blocks. |
 |  [isKeyValue(item)](./mapping-template-compose.iskeyvalue.md) | **_(BETA)_** Returns if a given value is a [KeyValue](./mapping-template-compose.keyvalue.md)<!-- -->. |
+|  [orCommaConditions(conditions)](./mapping-template-compose.orcommaconditions.md) | **_(BETA)_** ORs given conditions that determine if a comma is necessary. |
 
 ## Interfaces
 

@@ -25,5 +25,5 @@ export declare function getCommaConditionAfterItem(item: MappingTemplateItem): s
 
 string
 
-"true" if a trailing comma is always necessary.
+"true" if a trailing comma is always necessary, "false" if a trailing comma is never necessary.
 

@@ -5,7 +5,13 @@
 ```ts
 
 // @beta
+export function andCommaConditions(...conditions: string[]): string;
+
+// @beta
 export function composeMappingTemplate(items: MappingTemplateItem[]): string;
+
+// @beta
+export function getCommaConditionAfterIfBlock(ifBlock: IfBlock): string;
 
 // @beta
 export function getCommaConditionAfterItem(item: MappingTemplateItem): string;
@@ -32,5 +38,8 @@ export type KeyValue = [string, string];
 
 // @beta
 export type MappingTemplateItem = KeyValue | IfBlock;
+
+// @beta
+export function orCommaConditions(...conditions: string[]): string;
 
 ```
