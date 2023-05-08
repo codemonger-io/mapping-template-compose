@@ -74,7 +74,7 @@ describe('getCommaConditionAfterItem', () => {
     );
   });
 
-  it('should return ANDed conditions for nested if-then blocks', () => {
+  it('should AND conditions of nesting and nested if-then blocks', () => {
     const item: MappingTemplateItem = ifThen(
       '$input.params("username") != ""',
       [
@@ -105,7 +105,7 @@ describe('getCommaConditionAfterItem', () => {
     );
   });
 
-  it('should return ANDed conditions for an if-then block containing another if-then block following a key-value pair', () => {
+  it('should return only the top-level condition for an if-then block containing another if-then block following a key-value pair', () => {
     const item: MappingTemplateItem = ifThen(
       '$input.params("username") != ""',
       [
@@ -117,7 +117,63 @@ describe('getCommaConditionAfterItem', () => {
       ],
     );
     expect(getCommaConditionAfterItem(item)).toEqual(
-      '($input.params("username") != "") && ($input.json("$.flag") == "on")',
+      '$input.params("username") != ""',
+    );
+  });
+
+  it('should OR conditions of nested if-then blocks, and AND them with the condition of the nesting if-then block', () => {
+    const item: MappingTemplateItem = ifThen(
+      '$input.params("username") != ""',
+      [
+        ifThen(
+          '$input.json("$.flag") == "on"',
+          [['key', '"value"']],
+        ),
+        ifThen(
+          '$input.params("page") == "1"',
+          [['number', '123']],
+        ),
+      ],
+    );
+    expect(getCommaConditionAfterItem(item)).toEqual(
+      '($input.params("username") != "") && (($input.json("$.flag") == "on") || ($input.params("page") == "1"))',
+    );
+  });
+
+  it('should return "true" for an if-then-else block that contains only key-value pairs', () => {
+    const item: MappingTemplateItem = ifThenElse(
+      '$input.params("username") != ""',
+      [['key', '"value"']],
+      [['number', '123']],
+    );
+    expect(getCommaConditionAfterItem(item)).toEqual('true');
+  });
+
+  it('should AND the condition of a nesting if-then-else block and the condition of an if-then block nested in the then-part, and OR it with the negated condition of the nesting if-then-else block', () => {
+    const item: MappingTemplateItem = ifThenElse(
+      '$input.params("username") != ""',
+      [ifThen(
+        '$input.json("$.flag") == "on"',
+        [['key', '"value"']],
+      )],
+      [['number', '123']],
+    );
+    expect(getCommaConditionAfterItem(item)).toEqual(
+      '(($input.params("username") != "") && ($input.json("$.flag") == "on")) || (!($input.params("username") != ""))',
+    );
+  });
+
+  it('should AND the negated condition of a nesting if-then-else block and the condition of an if-then block nested in the else-part, and OR it with the condition of the nesting if-then-else block', () => {
+    const item: MappingTemplateItem = ifThenElse(
+      '$input.params("username") != ""',
+      [['key', '"value"']],
+      [ifThen(
+        '$input.json("$.flag") == "on"',
+        [['number', '123']],
+      )],
+    );
+    expect(getCommaConditionAfterItem(item)).toEqual(
+      '($input.params("username") != "") || ((!($input.params("username") != "")) && ($input.json("$.flag") == "on"))',
     );
   });
 });

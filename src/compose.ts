@@ -35,6 +35,11 @@ function _composeMappingTemplate(
       // IfBlock
       context.enterIfBlock(item);
       _composeMappingTemplate(item.thenBlock, context);
+      if (item.elseBlock != null) {
+        context.leaveBlock();
+        context.enterElseBlock();
+        _composeMappingTemplate(item.elseBlock, context);
+      }
       context.leaveBlock();
     }
   }

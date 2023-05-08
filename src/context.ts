@@ -1,4 +1,4 @@
-import { IfBlock, getCommaConditionAfterItem } from './items';
+import { IfBlock, getCommaConditionAfterIfBlock, getCommaConditionAfterItem, orConditions } from './items';
 
 /**
  * Pending block.
@@ -26,6 +26,17 @@ interface PendingBlock {
    *   If this pending block is not open.
    */
   enterIfBlock(definition: IfBlock): void;
+
+  /**
+   * Enters the `#else` block.
+   *
+   * @throws Error
+   *
+   *   If this pending block is not open,
+   *   or if the last pending block in this pending block is not
+   *   `IfDirectiveBlock`.
+   */
+  enterElseBlock(): void;
 
   /**
    * Leaves the last block.
@@ -129,15 +140,45 @@ abstract class BlockContext implements PendingBlock {
   }
 
   enterIfBlock(definition: IfBlock) {
+    if (!this._isOpen) {
+      throw new Error('block is not open');
+    }
     const lastPendingBlock = this.lastPendingBlock;
-    if (lastPendingBlock != null && lastPendingBlock.isOpen()) {
+    if (lastPendingBlock?.isOpen()) {
       lastPendingBlock.enterIfBlock(definition);
     } else {
-      const commaContext =
-        this.lastPendingBlock?.getCommaContext() ?? COMMA_CONTEXT_NEVER;
+      let commaContext: CommaContext;
+      if (getCommaConditionAfterIfBlock(definition) === 'true') {
+        this.finishWithTrailingComma();
+        commaContext = COMMA_CONTEXT_NEVER;
+      } else{
+        commaContext =
+          this.lastPendingBlock?.getCommaContext() ?? COMMA_CONTEXT_NEVER;
+      }
+      if (commaContext.contextType === 'never') {
+        commaContext = this.commaContext;
+      }
       this.pendingBlocks.push(
         new IfDirectiveBlock(this.indent, definition, commaContext),
       );
+    }
+  }
+
+  enterElseBlock() {
+    if (!this._isOpen) {
+      throw new Error('block is not open');
+    }
+    const lastPendingBlock = this.lastPendingBlock;
+    if (lastPendingBlock == null) {
+      throw new Error('no preceding if block');
+    }
+    if (lastPendingBlock.isOpen()) {
+      lastPendingBlock.enterElseBlock();
+    } else {
+      if (!(lastPendingBlock instanceof IfDirectiveBlock)) {
+        throw new Error('no preceding if block');
+      }
+      this.pendingBlocks.push(lastPendingBlock.createElseBlock());
     }
   }
 
@@ -274,6 +315,10 @@ class KeyValueLine implements PendingBlock {
     throw new Error('key-value pair is not open');
   }
 
+  enterElseBlock() {
+    throw new Error('key-value pair is not open');
+  }
+
   leaveBlock() {
     throw new Error('key-value never contains an open block');
   }
@@ -323,7 +368,7 @@ class KeyValueLine implements PendingBlock {
 
 /** Block starting with "#if". */
 class IfDirectiveBlock extends BlockContext {
-  /** Initializes with the condition. */
+  /** Initializes with the block definition. */
   constructor(
     indent: string,
     public definition: IfBlock,
@@ -346,20 +391,39 @@ class IfDirectiveBlock extends BlockContext {
           contextType: 'conditional',
           conditions: [
             ...this.commaContext.conditions,
-            getCommaConditionAfterItem(this.definition),
+            getCommaConditionAfterIfBlock(this.definition),
           ],
         };
       case 'never':
-        return {
-          contextType: 'conditional',
-          conditions: [getCommaConditionAfterItem(this.definition)],
-        };
+        {
+          const condition = getCommaConditionAfterIfBlock(this.definition);
+          if (condition === 'true') {
+            return COMMA_CONTEXT_UNCONDITIONAL;
+          }
+          return {
+            contextType: 'conditional',
+            conditions: [condition],
+          };
+        }
       default:
         const check: never = this.commaContext;
         throw new Error(
           'unexpected comma context type: ' + this.commaContext,
         );
     }
+  }
+
+  protected getCommaContextOfPart(): CommaContext {
+    let condition = orConditions(
+      ...this.definition.thenBlock.map(i => getCommaConditionAfterItem(i)),
+    );
+    if (condition === 'true') {
+      return COMMA_CONTEXT_UNCONDITIONAL;
+    }
+    return {
+      contextType: 'conditional',
+      conditions: [condition],
+    };
   }
 
   /** Render the "#if" block. */
@@ -370,7 +434,9 @@ class IfDirectiveBlock extends BlockContext {
     ];
     const newLines = this.renderPendingBlocks(options);
     renderedLines = renderedLines.concat(newLines);
-    renderedLines.push('#end');
+    if (this.definition.elseBlock == null) {
+      renderedLines.push('#end');
+    }
     return renderedLines;
   }
 
@@ -392,7 +458,7 @@ class IfDirectiveBlock extends BlockContext {
           }
           break;
         case 'conditional':
-          {
+          if (this.getCommaContextOfPart().contextType === 'unconditional') {
             let condition;
             if (this.commaContext.conditions.length === 1) {
               condition = this.commaContext.conditions[0];
@@ -421,6 +487,55 @@ class IfDirectiveBlock extends BlockContext {
       const newLines = block.render(options);
       renderedLines = renderedLines.concat(newLines);
     }
+    return renderedLines;
+  }
+
+  /** Creates the `#else` block of this `#if` block. */
+  createElseBlock(): ElseDirectiveBlock {
+    return new ElseDirectiveBlock(
+      this.indent,
+      this.definition,
+      this.commaContext,
+    );
+  }
+}
+
+/** Block starting with `#else`. */
+class ElseDirectiveBlock extends IfDirectiveBlock {
+  /** Initializes with the block definition. */
+  constructor(
+    indent: string,
+    definition: IfBlock,
+    commaContext: CommaContext,
+  ) {
+    super(indent, definition, commaContext);
+  }
+
+  protected getCommaContextOfPart(): CommaContext {
+    if (this.definition.elseBlock == null) {
+      return COMMA_CONTEXT_NEVER;
+    }
+    let condition = orConditions(
+      ...this.definition.elseBlock.map(i => getCommaConditionAfterItem(i)),
+    );
+    if (condition === 'true') {
+      return COMMA_CONTEXT_UNCONDITIONAL;
+    }
+    return {
+      contextType: 'conditional',
+      conditions: [condition],
+    };
+  }
+
+  /** Renders the `#else` block. */
+  render(options: PendingBlockRenderOptions): string[] {
+    let renderedLines = [
+      `#else`,
+      ...this.finishedLines,
+    ];
+    const newLines = this.renderPendingBlocks(options);
+    renderedLines = renderedLines.concat(newLines);
+    renderedLines.push('#end');
     return renderedLines;
   }
 }

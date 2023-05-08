@@ -110,7 +110,8 @@ export function ifThenElse(
  *
  * @returns
  *
- *   "true" if a trailing comma is always necessary.
+ *   "true" if a trailing comma is always necessary,
+ *   "false" if a trailing comma is never necessary.
  *
  * @beta
  */
@@ -118,24 +119,93 @@ export function getCommaConditionAfterItem(item: MappingTemplateItem): string {
   if (isKeyValue(item)) {
     return 'true';
   }
-  // ifBlock
-  const { condition, thenBlock } = item;
-  if (thenBlock.length > 0) {
-    const lastItem = thenBlock[thenBlock.length - 1];
-    return and(condition, getCommaConditionAfterItem(lastItem));
-  }
-  return condition;
+  return getCommaConditionAfterIfBlock(item);
+}
 
-  function and(...conditions: string[]): string {
-    conditions = conditions.filter(c => c !== 'true');
-    if (conditions.length === 0) {
-      return 'true';
-    }
-    if (conditions.length === 1) {
-      return conditions[0];
-    }
-    return conditions
-      .map(c => `(${c})`)
-      .join(' && ');
+/**
+ * Returns the condition in which a trailing comma is necessary after a given
+ * {@link IfBlock}.
+ *
+ * @remarks
+ *
+ * ORs conditions of the then- and else-blocks.
+ *
+ * The condition of the then-block:
+ * - ORs conditions of all the items in the then-block
+ * - ANDs the above with the condition of `ifBlock`
+ *
+ * The condition of the else-block:
+ * - ORs conditions of all the items in the else-block
+ * - ANDS the above with the negated condition of `ifBlock`
+ *
+ * @returns
+ *
+ *   "true" if a trailing comma is always necessary,
+ *   "false" if a trailing comma is never necessary.
+ *
+ * @beta
+ */
+export function getCommaConditionAfterIfBlock(ifBlock: IfBlock): string {
+  const { condition, elseBlock, thenBlock } = ifBlock;
+  let thenSubcondition: string;
+  if (thenBlock.length > 0) {
+    thenSubcondition = orConditions(
+      ...thenBlock.map(i => getCommaConditionAfterItem(i)),
+    );
+  } else {
+    thenSubcondition = 'false';
   }
+  let elseSubcondition: string;
+  if (elseBlock != null && elseBlock.length > 0) {
+    elseSubcondition = orConditions(
+      ...elseBlock.map(i => getCommaConditionAfterItem(i)),
+    );
+  } else {
+    elseSubcondition = 'false';
+  }
+  if ((thenSubcondition === 'true') && (elseSubcondition === 'true')) {
+    return 'true'; // (A || !A) → true
+  }
+  return orConditions(
+    andConditions(condition, thenSubcondition),
+    andConditions(`!(${condition})`, elseSubcondition),
+  );
+}
+
+// ORs conditions.
+//
+// "false" if `conditions` is empty.
+export function orConditions(...conditions: string[]): string {
+  if (conditions.indexOf('true') !== -1) {
+    return 'true';
+  }
+  conditions = conditions.filter(c => c != 'false');
+  if (conditions.length === 0) {
+    return 'false';
+  }
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+  return conditions
+    .map(c => `(${c})`)
+    .join(' || ');
+}
+
+// ANDs conditions.
+//
+// "true" if `conditions` is empty.
+function andConditions(...conditions: string[]): string {
+  if (conditions.indexOf('false') !== -1) {
+    return 'false';
+  }
+  conditions = conditions.filter(c => c != 'true');
+  if (conditions.length === 0) {
+    return 'true';
+  }
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+  return conditions
+    .map(c => `(${c})`)
+    .join(' && ');
 }
