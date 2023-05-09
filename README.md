@@ -4,19 +4,19 @@ English / [日本語](./README.ja.md)
 
 Makes [Amazon API Gateway](https://aws.amazon.com/api-gateway/)'s [mapping template](https://docs.aws.amazon.com/apigateway/latest/developerguide/rest-api-data-transformations.html) composable.
 
-This library is especially powerful if you combine it with [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/).
+This library is especially powerful if you combine it with [AWS Cloud Development Kit](https://aws.amazon.com/cdk/).
 
 ## Installing this library
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.0
 ```
 
 ## Motivation
 
 Have you ever felt that describing mapping templates for Amazon API Gateway is cumbersome?
 I got tired of writing mapping templates because:
-1. I had to write a lot of boilderplate code; e.g., extracting a query string as a property:
+1. I had to write a lot of boilderplate code; e.g., extracting a query parameter as a property:
 
     ```json
     "username": "$util.escapeJavaScript($util.urlDecode($input.params("username"))).replaceAll("\\'", "'")"
@@ -24,7 +24,7 @@ I got tired of writing mapping templates because:
 
 2. It was difficult to reuse components of mapping templates
 
-Regarding the second issue, we have to make sure a JSON representation resulting from a mapping template valid.
+Regarding the second issue, the major difficulty is in making sure a JSON representation resulting from a mapping template valid.
 
 Suppose you have the following property definitions as components:
 
@@ -106,7 +106,7 @@ This library is intended to **relieve the pain of writing mapping templates** li
 
 ## Example
 
-You can rewrite the example in the previous section with this library:
+You can rewrite the example in the previous section with this library into:
 
 ```ts
 import { composeMappingTemplate, ifThen } from 'mapping-template-compose';
@@ -146,11 +146,7 @@ composeMappingTemplate([
 ]);
 ```
 
-## How it works
-
-This seemingly trivial task turns out complicated.
-
-## What mapping template you can compose
+## What mapping template can we compose?
 
 What this library specifically does is only one thing: to determine **where to place a comma (",")**.
 However, this seemingly trivial task turns out complicated as you can see in the example in [Section "Motivation"](#motivation).
