@@ -412,3 +412,36 @@ will produce:
 #end
 }
 ```
+
+## Embedding a composed object in another mapping template
+
+You can embed a result of `composeMappingTemplate` as a property value in another mapping template:
+
+```ts
+import { composeMappingTemplate, ifThen } from 'mapping-template-compose';
+
+composeMappingTemplate([
+  ['embedded', composeMappingTemplate([
+    ['key', '"value"'],
+    ifThen(
+      '$input.params("flag") == "on"',
+      [['key2', '123']],
+    ),
+  ])],
+  ['key3', 'true'],
+]);
+```
+
+will produce:
+
+```json
+{
+  "embedded": {
+    "key": "value"
+  #if ($input.params("flag") == "on")
+    ,"key2": 123
+  #end
+  },
+  "key3": true
+}
+```
