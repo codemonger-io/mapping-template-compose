@@ -4,7 +4,7 @@
 
 ## isKeyValue() function
 
-> This API is provided as a preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
 > 
 
 Returns if a given value is a [KeyValue](./mapping-template-compose.keyvalue.md)<!-- -->.

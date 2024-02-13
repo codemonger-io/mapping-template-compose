@@ -4,7 +4,7 @@
 
 ## MappingTemplateItem type
 
-> This API is provided as a preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
 > 
 
 Item constituting a mapping template.
@@ -12,7 +12,7 @@ Item constituting a mapping template.
 **Signature:**
 
 ```typescript
-export declare type MappingTemplateItem = KeyValue | IfBlock;
+export type MappingTemplateItem = KeyValue | IfBlock;
 ```
 **References:** [KeyValue](./mapping-template-compose.keyvalue.md)<!-- -->, [IfBlock](./mapping-template-compose.ifblock.md)
 
