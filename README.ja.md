@@ -9,7 +9,7 @@
 ## ライブラリをインストールする
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.0
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.1
 ```
 
 ## 動機

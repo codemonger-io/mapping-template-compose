@@ -9,7 +9,7 @@ This library is especially powerful if you combine it with [AWS Cloud Developmen
 ## Installing this library
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.0
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.1
 ```
 
 ## Motivation
