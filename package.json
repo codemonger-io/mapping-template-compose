@@ -1,6 +1,6 @@
 {
-  "name": "mapping-template-compose",
-  "version": "0.1.1",
+  "name": "@codemonger-io/mapping-template-compose",
+  "version": "0.2.0",
   "description": "Compose API Gateway mapping templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
