@@ -9,7 +9,7 @@ This library is especially powerful if you combine it with [AWS Cloud Developmen
 ## Installing this library
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.1
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
 ```
 
 ## Motivation
@@ -109,7 +109,7 @@ This library is intended to **relieve the pain of writing mapping templates** li
 You can rewrite the example in the previous section with this library into:
 
 ```ts
-import { composeMappingTemplate, ifThen } from 'mapping-template-compose';
+import { composeMappingTemplate, ifThen } from '@codemonger-io/mapping-template-compose';
 
 composeMappingTemplate([
   ifThen(
@@ -130,7 +130,7 @@ composeMappingTemplate([
 You can make it further modular:
 
 ```ts
-import { type KeyValue, composeMappingTemplate, ifThen } from 'mapping-template-compose';
+import { type KeyValue, composeMappingTemplate, ifThen } from '@codemonger-io/mapping-template-compose';
 
 const username: KeyValue = ['username', `"$util.escapeJavaScript($util.urlDecode($input.params("username"))).replaceAll("\\'", "'")"`];
 const signature: KeyValue = ['signature', '$input.json("$.signature")'];
@@ -163,23 +163,23 @@ You can find the API documentation in [`./api-docs/markdown` folder](./api-docs/
 ### Resolving dependencies
 
 ```sh
-npm ci
+pnpm install --frozen-lockfile
 ```
 
 ### Building
 
 ```sh
-npm run build
+pnpm build
 ```
 
 ### Testing
 
 ```sh
-npm test
+pnpm test
 ```
 
 ### Generating the API documentation
 
 ```sh
-npm run build:doc
+pnpm build:doc
 ```

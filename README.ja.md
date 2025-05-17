@@ -9,7 +9,7 @@
 ## ライブラリをインストールする
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.1.1
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
 ```
 
 ## 動機
@@ -109,7 +109,7 @@ const date = `"date": "$util.escapeJavaScript($util.urlDecode($input.params("dat
 このライブラリを用いると前節の例は以下のように書き換えられます。
 
 ```ts
-import { composeMappingTemplate, ifThen } from 'mapping-template-compose';
+import { composeMappingTemplate, ifThen } from '@codemonger-io/mapping-template-compose';
 
 composeMappingTemplate([
   ifThen(
@@ -130,7 +130,7 @@ composeMappingTemplate([
 さらにモジュール化することもできます。
 
 ```ts
-import { type KeyValue, composeMappingTemplate, ifThen } from 'mapping-template-compose';
+import { type KeyValue, composeMappingTemplate, ifThen } from '@codemonger-io/mapping-template-compose';
 
 const username: KeyValue = ['username', `"$util.escapeJavaScript($util.urlDecode($input.params("username"))).replaceAll("\\'", "'")"`];
 const signature: KeyValue = ['signature', '$input.json("$.signature")'];
@@ -163,23 +163,23 @@ APIドキュメントは[`./api-docs/markdown`フォルダ](./api-docs/markdown/
 ### 依存関係の解決
 
 ```sh
-npm ci
+pnpm install --frozen-lockfile
 ```
 
 ### ビルド
 
 ```sh
-npm run build
+pnpm build
 ```
 
 ### テスト
 
 ```sh
-npm test
+pnpm test
 ```
 
 ### APIドキュメントの生成
 
 ```sh
-npm run build:doc
+pnpm build:doc
 ```
