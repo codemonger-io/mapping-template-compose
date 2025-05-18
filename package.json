@@ -1,6 +1,6 @@
 {
-  "name": "mapping-template-compose",
-  "version": "0.1.1",
+  "name": "@codemonger-io/mapping-template-compose",
+  "version": "0.2.0",
   "description": "Compose API Gateway mapping templates",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,10 +10,10 @@
     "dist/index.d.ts"
   ],
   "scripts": {
-    "build": "rollup -c && api-extractor run --local",
-    "build:doc": "npm run build && api-documenter markdown --input-folder temp --output-folder api-docs/markdown",
+    "build": "rimraf dist && rollup -c && api-extractor run --local",
+    "build:doc": "run-s build && api-documenter markdown --input-folder temp --output-folder api-docs/markdown",
     "type-check": "tsc --noEmit",
-    "prepare": "npm run build",
+    "prepare": "run-s build",
     "test": "jest"
   },
   "keywords": [
@@ -27,15 +27,17 @@
     "node": ">=12.0.0"
   },
   "devDependencies": {
-    "@microsoft/api-documenter": "7.23.23",
-    "@microsoft/api-extractor": "7.40.1",
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@microsoft/api-documenter": "^7.26.27",
+    "@microsoft/api-extractor": "^7.52.8",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.17",
+    "@types/node": "^22.15.18",
     "jest": "^29.7.0",
+    "npm-run-all2": "^8.0.2",
+    "rimraf": "^6.0.1",
     "rollup": "^4.10.0",
     "ts-jest": "^29.1.2",
     "tslib": "^2.6.2",
-    "typescript": "5.3.3"
+    "typescript": "^5.8.3"
   }
 }
