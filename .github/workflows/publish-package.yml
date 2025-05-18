@@ -31,7 +31,7 @@ jobs:
 
       - name: Get short commit hash
         id: commit-hash
-        run: echo "short_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "short-commit-hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       # appends the short commit hash to the version number
       # 1. reads the package.json file
