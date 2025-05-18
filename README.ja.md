@@ -12,6 +12,40 @@
 npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
 ```
 
+### GitHub Packagesからインストールする
+
+`main`ブランチにコミットがプッシュされるたびに、*開発者用パッケージ*がGitHub Packagesの管理するnpmレジストリにパブリッシュされます。
+*開発者用パッケージ*のバージョンは次のリリースバージョンにハイフン(`-`)と短いコミットハッシュをつなげものになります。例、`0.2.0-abc1234` (`abc1234`はパッケージをビルドするのに使ったコミット(*スナップショット*)の短いコミットハッシュ)。
+*開発者用パッケージ*は[こちら](https://github.com/codemonger-io/mapping-template-compose/pkgs/npm/mapping-template-compose)にあります。
+
+#### GitHubパーソナルアクセストークンの設定
+
+*開発者用パッケージ*をインストールするには、最低限`read:packages`スコープの**クラッシック**GitHubパーソナルアクセストークン(PAT)を設定する必要があります。
+以下、簡単にPATの設定方法を説明します。
+より詳しくは[GitHubのドキュメント](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)をご参照ください。
+
+PATが手に入ったら以下の内容の`.npmrc`ファイルをホームディレクトリに作成してください。
+
+```sh
+//npm.pkg.github.com/:_authToken=$YOUR_GITHUB_PAT
+```
+
+`$YOUR_GITHUB_PAT`はご自身のPATに置き換えてください。
+
+プロジェクトのルートディレクトリに以下の内容の`.npmrc`ファイルを作成してください。
+
+```sh
+@codemonger-io:registry=https://npm.pkg.github.com
+```
+
+これで以下のコマンドで*開発者用パッケージ*をインストールできます。
+
+```sh
+npm install @codemonger-io/mapping-template-compose@0.2.0-abc1234
+```
+
+`abc1234`はインストールしたい*スナップショット*の短いコミットハッシュに置き換えてください。
+
 ## 動機
 
 Amazon API Gatewayのマッピングテンプレートを記述するのを面倒くさいと感じたことはありますか?
