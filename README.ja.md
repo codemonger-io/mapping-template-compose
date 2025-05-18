@@ -20,7 +20,7 @@ npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
 
 #### GitHubパーソナルアクセストークンの設定
 
-*開発者用パッケージ*をインストールするには、最低限`read:packages`スコープの**クラッシック**GitHubパーソナルアクセストークン(PAT)を設定する必要があります。
+*開発者用パッケージ*をインストールするには、最低限`read:packages`スコープの**クラシック**GitHubパーソナルアクセストークン(PAT)を設定する必要があります。
 以下、簡単にPATの設定方法を説明します。
 より詳しくは[GitHubのドキュメント](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)をご参照ください。
 
