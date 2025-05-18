@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - issue/2-gha-publish-dev # TODO: remove after testing
 
 permissions:
   contents: read
