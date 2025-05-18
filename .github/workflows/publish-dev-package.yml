@@ -1,0 +1,21 @@
+name: "Publish a developer package to GitHub npm registry"
+
+on:
+  push:
+    branches:
+      - main
+      - issue/2-gha-publish-dev # TODO: remove after testing
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish-dev:
+    uses: ./.github/workflows/publish-package.yml
+
+    with:
+      npm-registry-url: "https://npm.pkg.github.com"
+
+    secrets:
+      npm-token: ${{ secrets.GITHUB_TOKEN }}
