@@ -12,6 +12,40 @@ This library is especially powerful if you combine it with [AWS Cloud Developmen
 npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
 ```
 
+### Installing from GitHub Packages
+
+Every time commits are pushed to the `main` branch, a _developer package_ is published to the npm registry managed by GitHub Packages.
+A _developer package_ bears the next release version number but followed by a dash (`-`) plus the short commit hash; e.g., `0.2.0-abc1234` where `abc1234` is the short commit hash of the commit used to build the package (_snapshot_).
+You can find _developer packages_ [here](https://github.com/codemonger-io/mapping-template-compose/pkgs/npm/mapping-template-compose).
+
+#### Configuring a GitHub personal access token
+
+To install a _developer package_, you need to configure a **classic** GitHub personal access token (PAT) with at least the `read:packages` scope.
+Below briefly explains how to configure a PAT.
+Please refer to the [GitHub documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) for more details.
+
+Once you have a PAT, please create a `.npmrc` file in your home directory with the following content:
+
+```sh
+//npm.pkg.github.com/:_authToken=$YOUR_GITHUB_PAT
+```
+
+Please replace `$YOUR_GITHUB_PAT` with your PAT.
+
+In the root directory of your project, please create a `.npmrc` file with the following content:
+
+```sh
+@codemonger-io:registry=https://npm.pkg.github.com
+```
+
+Then you can install a _developer package_ with the following command:
+
+```sh
+npm install @codemonger-io/mapping-template-compose@0.2.0-abc1234
+```
+
+Please replace `abc1234` with the short commit hash of the _snapshot_ you want to install.
+
 ## Motivation
 
 Have you ever felt that describing mapping templates for Amazon API Gateway is cumbersome?
