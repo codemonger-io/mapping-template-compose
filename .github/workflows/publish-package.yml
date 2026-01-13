@@ -50,7 +50,7 @@ jobs:
 
       - name: Install pnpm ${{ env.pnpm-version }}
         uses: pnpm/action-setup@v4
-        # version is omitted here, because package.json specifies it
+        # pnpm version is omitted here; it is managed by the "packageManager" field in package.json
 
       - name: Setup Node.js ${{ env.node-version }}
         uses: actions/setup-node@v6
