@@ -9,13 +9,13 @@
 ## ライブラリをインストールする
 
 ```sh
-npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.0
+npm install https://github.com/codemonger-io/mapping-template-compose.git#v0.2.1
 ```
 
 ### GitHub Packagesからインストールする
 
 `main`ブランチにコミットがプッシュされるたびに、*開発者用パッケージ*がGitHub Packagesの管理するnpmレジストリにパブリッシュされます。
-*開発者用パッケージ*のバージョンは次のリリースバージョンにハイフン(`-`)と短いコミットハッシュをつなげものになります。例、`0.2.0-abc1234` (`abc1234`はパッケージをビルドするのに使ったコミット(*スナップショット*)の短いコミットハッシュ)。
+*開発者用パッケージ*のバージョンは次のリリースバージョンにハイフン(`-`)と短いコミットハッシュをつなげものになります。例、`0.2.1-abc1234` (`abc1234`はパッケージをビルドするのに使ったコミット(*スナップショット*)の短いコミットハッシュ)。
 *開発者用パッケージ*は[こちら](https://github.com/codemonger-io/mapping-template-compose/pkgs/npm/mapping-template-compose)にあります。
 
 #### GitHubパーソナルアクセストークンの設定
@@ -41,7 +41,7 @@ PATが手に入ったら以下の内容の`.npmrc`ファイルをホームディ
 これで以下のコマンドで*開発者用パッケージ*をインストールできます。
 
 ```sh
-npm install @codemonger-io/mapping-template-compose@0.2.0-abc1234
+npm install @codemonger-io/mapping-template-compose@0.2.1-abc1234
 ```
 
 `abc1234`はインストールしたい*スナップショット*の短いコミットハッシュに置き換えてください。
